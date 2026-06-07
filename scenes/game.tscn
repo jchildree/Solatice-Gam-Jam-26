@@ -29,6 +29,7 @@ script = ExtResource("2_plyr01")
 shape = SubResource("CS_player")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
+scale = Vector2(0.333, 0.333)
 texture = ExtResource("5_spr01")
 
 [node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
