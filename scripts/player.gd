@@ -76,6 +76,15 @@ func _physics_process(delta: float) -> void:
 		AudioManager.play_sfx("land")
 	_was_on_floor = is_on_floor()
 
+func reset() -> void:
+	velocity = Vector2.ZERO
+	is_dashing = false
+	dash_timer = 0.0
+	dash_cooldown_timer = 0.0
+	wall_jump_lockout = 0.0
+	coyote_timer = 0.0
+	jump_buffer_timer = 0.0
+
 func _handle_dash(delta: float) -> void:
 	if dash_cooldown_timer > 0:
 		dash_cooldown_timer -= delta

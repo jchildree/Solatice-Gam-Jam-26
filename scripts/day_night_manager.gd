@@ -24,3 +24,8 @@ func get_cooldown_percent() -> float:
 
 func is_on_cooldown() -> bool:
 	return cooldown_remaining > 0
+
+func reset() -> void:
+	is_day = true
+	cooldown_remaining = 0.0
+	emit_signal("state_changed", is_day)
