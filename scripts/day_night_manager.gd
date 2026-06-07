@@ -3,7 +3,7 @@ extends Node
 signal state_changed(is_day: bool)
 
 var is_day: bool = true
-var cooldown: float = 3.0
+var cooldown: float = 1.0
 var cooldown_remaining: float = 0.0
 
 func _process(delta: float) -> void:
