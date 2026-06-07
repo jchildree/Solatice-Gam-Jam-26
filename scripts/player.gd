@@ -24,7 +24,7 @@ const JUMP_RELEASE_GRAVITY_MULT = 3.0
 const WALL_JUMP_LOCKOUT_TIME = 0.15
 const APEX_GRAVITY_MULT = 0.69
 const APEX_THRESHOLD = 80.0
-const BASE_SCALE = Vector2(1.5, 1.5)
+const BASE_SCALE = Vector2(1.0, 1.0)
 
 var _run_tween: Tween
 var _running: bool = false
