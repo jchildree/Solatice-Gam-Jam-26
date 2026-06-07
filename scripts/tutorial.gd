@@ -3,7 +3,7 @@ extends Node2D
 const STEPS = [
 	{ "actions": ["move_left", "move_right"], "prompt": "Press A or D to move" },
 	{ "actions": ["jump"], "prompt": "Press Space to jump" },
-	{ "actions": ["dash"], "prompt": "Press Shift to dash" },
+	{ "actions": ["dash"], "prompt": "Press Ctrl to dash" },
 	{ "actions": ["toggle"], "prompt": "Press E to toggle day and night" },
 ]
 

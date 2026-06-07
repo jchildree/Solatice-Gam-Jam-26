@@ -36,7 +36,7 @@ Run: press F5 in Godot editor, or export to Windows/web via Project > Export.
 | move_left | A / Left |
 | move_right | D / Right |
 | jump | Space / W |
-| dash | Shift |
+| dash | Ctrl |
 | toggle | E |
 
 ### Project structure

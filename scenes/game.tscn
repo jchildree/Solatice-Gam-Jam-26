@@ -8,8 +8,8 @@
 [ext_resource type="Script" path="res://scripts/background.gd" id="6_bg01"]
 
 [sub_resource type="CapsuleShape2D" id="CS_player"]
-radius = 10.0
-height = 48.0
+radius = 16.0
+height = 64.0
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game01")
@@ -29,6 +29,7 @@ script = ExtResource("2_plyr01")
 shape = SubResource("CS_player")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
+scale = Vector2(1.5, 1.5)
 texture = ExtResource("5_spr01")
 
 [node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
