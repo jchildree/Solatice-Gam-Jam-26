@@ -1,0 +1,21 @@
+# Godot cache - never commit
+.godot/
+
+# Exports
+builds/
+*.exe
+*.x86_64
+*.x86
+*.arm32
+*.arm64
+*.pck
+*.apk
+*.aab
+
+# Claude Code transient state
+.claude/state/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

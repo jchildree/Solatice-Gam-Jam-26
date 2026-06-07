@@ -1,0 +1,56 @@
+{
+    "hooks":  {
+                  "SessionStart":  [
+                                       {
+                                           "hooks":  [
+                                                         {
+                                                             "type":  "command",
+                                                             "command":  "node \"C:\\Users\\GreenSide\\repos\\Solatice Gam Jam 26\\.claude\\hooks\\caveman-activate.js\"",
+                                                             "timeout":  5000
+                                                         }
+                                                     ]
+                                       },
+                                       {
+                                           "hooks":  [
+                                                         {
+                                                             "type":  "command",
+                                                             "command":  "node \"C:\\Users\\GreenSide\\repos\\Solatice Gam Jam 26\\.claude\\hooks\\skill-metadata-loader.js\"",
+                                                             "timeout":  5000
+                                                         }
+                                                     ]
+                                       },
+                                       {
+                                           "hooks":  [
+                                                         {
+                                                             "type":  "command",
+                                                             "command":  "node \"C:\\Users\\GreenSide\\repos\\Solatice Gam Jam 26\\.claude\\hooks\\wiki-memory-inject.js\"",
+                                                             "timeout":  5000
+                                                         }
+                                                     ]
+                                       }
+                                   ],
+                  "UserPromptSubmit":  [
+                                           {
+                                               "hooks":  [
+                                                             {
+                                                                 "type":  "command",
+                                                                 "command":  "node \"C:\\Users\\GreenSide\\repos\\Solatice Gam Jam 26\\.claude\\hooks\\caveman-mode-tracker.js\"",
+                                                                 "timeout":  5000
+                                                             }
+                                                         ]
+                                           }
+                                       ],
+                  "PostToolUse":  [
+                                      {
+                                          "matcher":  "Write|Edit",
+                                          "hooks":  [
+                                                        {
+                                                            "type":  "command",
+                                                            "command":  "node \"C:\\Users\\GreenSide\\repos\\Solatice Gam Jam 26\\.claude\\hooks\\check-encoding.js\"",
+                                                            "timeout":  5000
+                                                        }
+                                                    ]
+                                      }
+                                  ]
+              }
+}

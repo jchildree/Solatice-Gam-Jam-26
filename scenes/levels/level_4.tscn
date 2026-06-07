@@ -1,0 +1,62 @@
+[gd_scene load_steps=6 format=3 uid="uid://solstice_lvl4"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/platform.tscn" id="1_plat"]
+[ext_resource type="PackedScene" path="res://scenes/objects/exit_portal.tscn" id="2_exit"]
+[ext_resource type="PackedScene" path="res://scenes/objects/checkpoint.tscn" id="3_chk"]
+
+[sub_resource type="RectangleShape2D" id="RS_ground"]
+size = Vector2(1280, 32)
+
+[sub_resource type="CircleShape2D" id="CS_exit"]
+radius = 24.0
+
+[sub_resource type="CircleShape2D" id="CS_chk"]
+radius = 20.0
+
+[node name="Level4" type="Node2D"]
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(100, 580)
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(640, 700)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RS_ground")
+
+[node name="DayPlatform1" parent="." instance=ExtResource("1_plat")]
+position = Vector2(200, 520)
+platform_type = 1
+
+[node name="ShadowPlatform1" parent="." instance=ExtResource("1_plat")]
+position = Vector2(380, 460)
+platform_type = 2
+
+[node name="DayPlatform2" parent="." instance=ExtResource("1_plat")]
+position = Vector2(560, 400)
+platform_type = 1
+
+[node name="Checkpoint1" parent="." instance=ExtResource("3_chk")]
+position = Vector2(560, 370)
+saved_time = 40.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Checkpoint1"]
+shape = SubResource("CS_chk")
+
+[node name="ShadowPlatform2" parent="." instance=ExtResource("1_plat")]
+position = Vector2(740, 320)
+platform_type = 2
+
+[node name="DayPlatform3" parent="." instance=ExtResource("1_plat")]
+position = Vector2(920, 240)
+platform_type = 1
+
+[node name="ShadowPlatform3" parent="." instance=ExtResource("1_plat")]
+position = Vector2(1100, 160)
+platform_type = 2
+
+[node name="ExitPortal" parent="." instance=ExtResource("2_exit")]
+position = Vector2(1100, 120)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitPortal"]
+shape = SubResource("CS_exit")

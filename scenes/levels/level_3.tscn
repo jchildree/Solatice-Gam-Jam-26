@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://solstice_lvl3"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/platform.tscn" id="1_plat"]
+[ext_resource type="PackedScene" path="res://scenes/objects/exit_portal.tscn" id="2_exit"]
+
+[sub_resource type="RectangleShape2D" id="RS_ground"]
+size = Vector2(1280, 32)
+
+[sub_resource type="CircleShape2D" id="CS_exit"]
+radius = 24.0
+
+[node name="Level3" type="Node2D"]
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(100, 580)
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(640, 700)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RS_ground")
+
+[node name="ShadowPlatform1" parent="." instance=ExtResource("1_plat")]
+position = Vector2(300, 600)
+platform_type = 2
+
+[node name="DayPlatform1" parent="." instance=ExtResource("1_plat")]
+position = Vector2(460, 555)
+platform_type = 1
+
+[node name="ShadowPlatform2" parent="." instance=ExtResource("1_plat")]
+position = Vector2(600, 440)
+platform_type = 2
+
+[node name="DayPlatform2" parent="." instance=ExtResource("1_plat")]
+position = Vector2(760, 380)
+platform_type = 1
+
+[node name="SolidPlatform1" parent="." instance=ExtResource("1_plat")]
+position = Vector2(920, 320)
+platform_type = 0
+
+[node name="ExitPortal" parent="." instance=ExtResource("2_exit")]
+position = Vector2(920, 280)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitPortal"]
+shape = SubResource("CS_exit")

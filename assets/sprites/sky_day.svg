@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="dayGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#87ceeb"/>
+      <stop offset="60%" stop-color="#f5c842"/>
+      <stop offset="100%" stop-color="#f07820"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#dayGrad)"/>
+  <circle cx="1100" cy="120" r="60" fill="#fff5a0" opacity="0.95"/>
+  <circle cx="1100" cy="120" r="80" fill="#ffe050" opacity="0.3"/>
+  <circle cx="1100" cy="120" r="100" fill="#ffc820" opacity="0.15"/>
+  <rect x="80" y="180" width="200" height="40" rx="20" fill="white" opacity="0.6"/>
+  <rect x="120" y="155" width="130" height="50" rx="25" fill="white" opacity="0.6"/>
+  <rect x="420" y="120" width="260" height="50" rx="25" fill="white" opacity="0.5"/>
+  <rect x="460" y="95" width="180" height="60" rx="30" fill="white" opacity="0.5"/>
+  <rect x="900" y="200" width="180" height="40" rx="20" fill="white" opacity="0.4"/>
+  <rect x="930" y="178" width="120" height="48" rx="24" fill="white" opacity="0.4"/>
+</svg>
