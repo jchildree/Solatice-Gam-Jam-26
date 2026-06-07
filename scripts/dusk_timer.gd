@@ -30,3 +30,7 @@ func pause() -> void:
 
 func resume() -> void:
 	active = true
+
+func deduct(seconds: float) -> void:
+	remaining = maxf(remaining - seconds, 0.0)
+	emit_signal("time_updated", remaining, total_time)

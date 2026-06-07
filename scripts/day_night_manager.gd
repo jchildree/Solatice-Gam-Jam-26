@@ -1,6 +1,9 @@
 extends Node
 
 signal state_changed(is_day: bool)
+signal toggled(cost: float)
+
+const TOGGLE_COST: float = 1.5
 
 var is_day: bool = true
 var cooldown: float = 1.0
@@ -16,6 +19,7 @@ func toggle() -> void:
 	is_day = !is_day
 	cooldown_remaining = cooldown
 	emit_signal("state_changed", is_day)
+	emit_signal("toggled", TOGGLE_COST)
 
 func get_cooldown_percent() -> float:
 	if cooldown <= 0:

@@ -8,6 +8,8 @@ const LEVELS = [
 	"res://scenes/levels/level_5.tscn",
 ]
 
+const LEVEL_BUDGETS = [60.0, 52.0, 44.0, 37.0, 30.0]
+
 var current_level_index: int = 0
 var checkpoint_position: Vector2 = Vector2.ZERO
 var checkpoint_saved_time: float = 60.0
@@ -18,6 +20,7 @@ var checkpoint_saved_time: float = 60.0
 
 func _ready() -> void:
 	dusk_timer.dusk_reached.connect(_on_dusk_reached)
+	DayNightManager.toggled.connect(_on_toggled)
 	load_level(current_level_index)
 
 func load_level(index: int) -> void:
@@ -38,16 +41,19 @@ func load_level(index: int) -> void:
 	if start:
 		player.global_position = start.global_position
 	checkpoint_position = player.global_position
-	checkpoint_saved_time = 60.0
+	checkpoint_saved_time = LEVEL_BUDGETS[index]
 	player.reset()
 	DayNightManager.reset()
-	dusk_timer.start(60.0)
+	dusk_timer.start(LEVEL_BUDGETS[index])
 
 func _on_dusk_reached() -> void:
 	player.global_position = checkpoint_position
 	player.reset()
 	DayNightManager.reset()
 	dusk_timer.reset_to_checkpoint(checkpoint_saved_time)
+
+func _on_toggled(cost: float) -> void:
+	dusk_timer.deduct(cost)
 
 func _on_checkpoint_reached(pos: Vector2, saved_time: float) -> void:
 	checkpoint_position = pos
