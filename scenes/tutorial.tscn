@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://tutorial01"]
+
+[ext_resource type="Script" path="res://scripts/tutorial.gd" id="1_tut"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="2_plyr"]
+[ext_resource type="Script" path="res://scripts/dusk_timer.gd" id="3_dusk"]
+[ext_resource type="Script" path="res://scripts/background.gd" id="4_bg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/stickman.svg" id="5_spr"]
+
+[sub_resource type="CapsuleShape2D" id="CS_player"]
+radius = 10.0
+height = 48.0
+
+[sub_resource type="RectangleShape2D" id="RS_floor"]
+size = Vector2(1280.0, 32.0)
+
+[node name="Tutorial" type="Node2D"]
+script = ExtResource("1_tut")
+
+[node name="Background" type="Sprite2D" parent="."]
+script = ExtResource("4_bg")
+position = Vector2(0, 0)
+centered = false
+z_index = -10
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(640, 400)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RS_floor")
+
+[node name="Player" type="CharacterBody2D" parent="." groups=["player"]]
+position = Vector2(200, 340)
+script = ExtResource("2_plyr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CS_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+texture = ExtResource("5_spr")
+
+[node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
+script = ExtResource("3_dusk")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="PromptLabel" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.75
+anchor_bottom = 0.75
+offset_left = -300.0
+offset_right = 300.0
+offset_top = -24.0
+offset_bottom = 24.0
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
