@@ -84,6 +84,7 @@ func reset() -> void:
 	wall_jump_lockout = 0.0
 	coyote_timer = 0.0
 	jump_buffer_timer = 0.0
+	_was_on_floor = true
 
 func _handle_dash(delta: float) -> void:
 	if dash_cooldown_timer > 0:

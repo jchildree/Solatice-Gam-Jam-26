@@ -46,6 +46,7 @@ func load_level(index: int) -> void:
 func _on_dusk_reached() -> void:
 	player.global_position = checkpoint_position
 	player.reset()
+	DayNightManager.reset()
 	dusk_timer.reset_to_checkpoint(checkpoint_saved_time)
 
 func _on_checkpoint_reached(pos: Vector2, saved_time: float) -> void:
