@@ -15,6 +15,9 @@ const TEXTURES = {
 
 func _ready() -> void:
 	sprite.texture = load(TEXTURES[platform_type])
+	if sprite.texture and collision.shape is RectangleShape2D:
+		var sz: Vector2 = collision.shape.size
+		sprite.scale = Vector2(sz.x / sprite.texture.get_width(), sz.y / sprite.texture.get_height())
 	DayNightManager.state_changed.connect(_on_state_changed)
 	_apply_state(DayNightManager.is_day)
 

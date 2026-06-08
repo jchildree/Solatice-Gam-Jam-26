@@ -1,12 +1,22 @@
 extends Sprite2D
 
-const TEX_DAY = preload("res://assets/sprites/sky_day.svg")
-const TEX_NIGHT = preload("res://assets/sprites/sky_night.svg")
+var tex_day: Texture2D = null
+var tex_night: Texture2D = null
 
 func _ready() -> void:
-	texture = TEX_DAY if DayNightManager.is_day else TEX_NIGHT
 	centered = false
 	DayNightManager.state_changed.connect(_on_state_changed)
 
+func set_level_textures(day: Texture2D, night: Texture2D) -> void:
+	tex_day = day
+	tex_night = night
+	_apply(DayNightManager.is_day)
+
 func _on_state_changed(is_day: bool) -> void:
-	texture = TEX_DAY if is_day else TEX_NIGHT
+	_apply(is_day)
+
+func _apply(is_day: bool) -> void:
+	texture = tex_day if is_day else tex_night
+	if texture:
+		var vp: Vector2 = get_viewport_rect().size
+		scale = Vector2(vp.x / texture.get_width(), vp.y / texture.get_height())

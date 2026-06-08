@@ -24,17 +24,46 @@ const JUMP_RELEASE_GRAVITY_MULT = 3.0
 const WALL_JUMP_LOCKOUT_TIME = 0.15
 const APEX_GRAVITY_MULT = 0.69
 const APEX_THRESHOLD = 80.0
-const BASE_SCALE = Vector2(0.333, 0.333)
 
-var _run_tween: Tween
-var _running: bool = false
+var _block_toggle: bool = false
+var _landing: bool = false
+
+func _ready() -> void:
+	_block_toggle = true
+	_setup_animations()
+
+func _setup_animations() -> void:
+	var frames := SpriteFrames.new()
+	_add_anim(frames, "idle", "res://assets/sprites/animations/Walking.png", range(12), 8.0, true)
+	_add_anim(frames, "run", "res://assets/sprites/animations/Running.png", range(12), 12.0, true)
+	_add_anim(frames, "jump", "res://assets/sprites/animations/Jumping.png", range(10), 14.0, false)
+	_add_anim(frames, "fall", "res://assets/sprites/animations/Falling.png", range(11), 8.0, true)
+	_add_anim(frames, "land", "res://assets/sprites/animations/Landing.png", range(6), 16.0, false)
+	_add_anim(frames, "dash", "res://assets/sprites/animations/Roll.png", range(9), 18.0, false)
+	$AnimatedSprite2D.sprite_frames = frames
+	$AnimatedSprite2D.animation_finished.connect(_on_animation_finished)
+
+func _add_anim(frames: SpriteFrames, anim: String, path: String, indices: Array, fps: float, loop: bool) -> void:
+	frames.add_animation(anim)
+	frames.set_animation_speed(anim, fps)
+	frames.set_animation_loop(anim, loop)
+	var tex: Texture2D = load(path)
+	for i in indices:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = tex
+		atlas.region = Rect2(i * 128, 0, 128, 128)
+		frames.add_frame(anim, atlas)
+
+func _on_animation_finished() -> void:
+	if $AnimatedSprite2D.animation == "land":
+		_landing = false
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		coyote_timer = COYOTE_TIME
 	else:
 		coyote_timer = max(coyote_timer - delta, 0.0)
-		var grav = GRAVITY
+		var grav := GRAVITY
 		if velocity.y < 0 and not Input.is_action_pressed("jump"):
 			grav *= JUMP_RELEASE_GRAVITY_MULT
 		elif abs(velocity.y) < APEX_THRESHOLD:
@@ -51,12 +80,12 @@ func _physics_process(delta: float) -> void:
 	wall_jump_lockout = max(wall_jump_lockout - delta, 0.0)
 
 	if not is_dashing:
-		var dir = Input.get_axis("move_left", "move_right")
+		var dir := Input.get_axis("move_left", "move_right")
 		if wall_jump_lockout <= 0:
 			velocity.x = dir * SPEED
 		if dir != 0:
 			last_dir = dir
-			$Sprite2D.flip_h = dir < 0
+			$AnimatedSprite2D.flip_h = dir < 0
 
 		if jump_buffer_timer > 0:
 			if coyote_timer > 0:
@@ -66,28 +95,25 @@ func _physics_process(delta: float) -> void:
 				jump_buffer_timer = 0.0
 				AudioManager.play_sfx("jump")
 			elif is_on_wall():
-				var normal = get_wall_normal()
+				var normal := get_wall_normal()
 				velocity = Vector2(normal.x * WALL_JUMP_H, WALL_JUMP_V)
 				_on_jump()
 				jump_buffer_timer = 0.0
 				wall_jump_lockout = WALL_JUMP_LOCKOUT_TIME
 				AudioManager.play_sfx("jump")
 
-	if Input.is_action_just_pressed("toggle"):
+	if not _block_toggle and Input.is_action_just_pressed("toggle"):
 		DayNightManager.toggle()
+	_block_toggle = false
 
 	move_and_slide()
-
-	var moving_on_floor = is_on_floor() and abs(velocity.x) > 10.0
-	if moving_on_floor:
-		_start_run_tween()
-	else:
-		_stop_run_tween()
 
 	if not _was_on_floor and is_on_floor():
 		AudioManager.play_sfx("land")
 		_on_land()
 	_was_on_floor = is_on_floor()
+
+	_update_animation()
 
 func reset() -> void:
 	velocity = Vector2.ZERO
@@ -98,45 +124,34 @@ func reset() -> void:
 	coyote_timer = 0.0
 	jump_buffer_timer = 0.0
 	_was_on_floor = true
-	if _run_tween:
-		_run_tween.kill()
-		_run_tween = null
-	_running = false
-	$Sprite2D.scale = BASE_SCALE
-	$Sprite2D.position.y = 0.0
-
-func _start_run_tween() -> void:
-	if _running:
-		return
-	_running = true
-	if _run_tween:
-		_run_tween.kill()
-	_run_tween = create_tween().set_loops()
-	_run_tween.tween_property($Sprite2D, "position:y", -4.0, 0.1)
-	_run_tween.tween_property($Sprite2D, "position:y", 4.0, 0.1)
-
-func _stop_run_tween() -> void:
-	if not _running:
-		return
-	_running = false
-	if _run_tween:
-		_run_tween.kill()
-		_run_tween = null
-	create_tween().tween_property($Sprite2D, "position:y", 0.0, 0.08)
+	_landing = false
+	$AnimatedSprite2D.play("idle")
 
 func _on_jump() -> void:
-	_stop_run_tween()
-	$Sprite2D.position.y = 0.0
-	var t = create_tween()
-	t.tween_property($Sprite2D, "scale", BASE_SCALE * Vector2(0.75, 1.3), 0.07)
-	t.tween_property($Sprite2D, "scale", BASE_SCALE, 0.1)
+	_landing = false
 
 func _on_land() -> void:
-	_stop_run_tween()
-	$Sprite2D.position.y = 0.0
-	var t = create_tween()
-	t.tween_property($Sprite2D, "scale", BASE_SCALE * Vector2(1.3, 0.75), 0.06)
-	t.tween_property($Sprite2D, "scale", BASE_SCALE, 0.1)
+	_landing = true
+	$AnimatedSprite2D.play("land")
+
+func _update_animation() -> void:
+	if _landing:
+		return
+	if is_dashing:
+		_play_anim("dash")
+	elif not is_on_floor():
+		if velocity.y < -50.0:
+			_play_anim("jump")
+		else:
+			_play_anim("fall")
+	elif abs(velocity.x) > 10.0:
+		_play_anim("run")
+	else:
+		_play_anim("idle")
+
+func _play_anim(anim: String) -> void:
+	if $AnimatedSprite2D.animation != anim:
+		$AnimatedSprite2D.play(anim)
 
 func _handle_dash(delta: float) -> void:
 	if dash_cooldown_timer > 0:
@@ -151,7 +166,7 @@ func _handle_dash(delta: float) -> void:
 		is_dashing = true
 		dash_timer = DASH_DURATION
 		dash_cooldown_timer = DASH_COOLDOWN
-		var dir = Input.get_axis("move_left", "move_right")
+		var dir := Input.get_axis("move_left", "move_right")
 		velocity.x = DASH_SPEED * (dir if dir != 0 else last_dir)
 		velocity.y = 0.0
 		AudioManager.play_sfx("dash")

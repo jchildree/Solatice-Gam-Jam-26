@@ -10,6 +10,22 @@ const LEVELS = [
 
 const LEVEL_BUDGETS = [60.0, 52.0, 44.0, 37.0, 30.0]
 
+const LEVEL_BOUNDS = [
+	Rect2(0, 0, 1280, 720),
+	Rect2(0, 0, 1280, 720),
+	Rect2(0, 0, 2560, 720),
+	Rect2(0, 0, 1280, 1440),
+	Rect2(0, 0, 2560, 1440),
+]
+
+const LEVEL_BACKGROUNDS = [
+	["res://assets/sprites/backgrounds/bg_l1_day.png", "res://assets/sprites/backgrounds/bg_l1_night.png"],
+	["res://assets/sprites/backgrounds/bg_l2_day.png", "res://assets/sprites/backgrounds/bg_l2_night.png"],
+	["res://assets/sprites/backgrounds/bg_l3_day.png", "res://assets/sprites/backgrounds/bg_l3_night.png"],
+	["res://assets/sprites/backgrounds/bg_l4_day.png", "res://assets/sprites/backgrounds/bg_l4_night.png"],
+	["res://assets/sprites/backgrounds/bg_l5_day.png", "res://assets/sprites/backgrounds/bg_l5_night.png"],
+]
+
 var current_level_index: int = 0
 var checkpoint_position: Vector2 = Vector2.ZERO
 var checkpoint_saved_time: float = 60.0
@@ -17,6 +33,8 @@ var checkpoint_saved_time: float = 60.0
 @onready var level_container: Node2D = $LevelContainer
 @onready var player: CharacterBody2D = $Player
 @onready var dusk_timer: Node = $DuskTimer
+@onready var camera: Camera2D = $Player/Camera2D
+@onready var background: Sprite2D = $BackgroundLayer/Background
 
 func _ready() -> void:
 	dusk_timer.dusk_reached.connect(_on_dusk_reached)
@@ -43,6 +61,13 @@ func load_level(index: int) -> void:
 	checkpoint_position = player.global_position
 	checkpoint_saved_time = LEVEL_BUDGETS[index]
 	player.reset()
+	var b: Rect2 = LEVEL_BOUNDS[index]
+	camera.limit_left = int(b.position.x)
+	camera.limit_top = int(b.position.y)
+	camera.limit_right = int(b.position.x + b.size.x)
+	camera.limit_bottom = int(b.position.y + b.size.y)
+	var bg_paths: Array = LEVEL_BACKGROUNDS[index]
+	background.set_level_textures(load(bg_paths[0]), load(bg_paths[1]))
 	DayNightManager.reset()
 	dusk_timer.start(LEVEL_BUDGETS[index])
 

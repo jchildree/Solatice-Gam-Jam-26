@@ -12,6 +12,10 @@ var current_step: int = 0
 @onready var prompt_label: Label = $UI/PromptLabel
 
 func _ready() -> void:
+	$Background.set_level_textures(
+		load("res://assets/sprites/backgrounds/bg_l1_day.png"),
+		load("res://assets/sprites/backgrounds/bg_l1_night.png")
+	)
 	_show_step(0)
 
 func _process(_delta: float) -> void:

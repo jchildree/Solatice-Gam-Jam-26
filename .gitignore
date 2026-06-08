@@ -19,3 +19,13 @@ builds/
 .DS_Store
 Thumbs.db
 desktop.ini
+__MACOSX/
+
+# Craftpix asset pack extras extracted to repo root
+1. NEW CLOUDS/
+2. NEW CLOUDS/
+3. NEW CLOUDS/
+4. NEW CLOUDS/
+COUPON.png.import
+Free Assets Craftpix!.url
+license.txt

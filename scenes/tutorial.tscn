@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://tutorial01"]
+[gd_scene load_steps=5 format=3 uid="uid://tutorial01"]
 
 [ext_resource type="Script" path="res://scripts/tutorial.gd" id="1_tut"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2_plyr"]
 [ext_resource type="Script" path="res://scripts/dusk_timer.gd" id="3_dusk"]
 [ext_resource type="Script" path="res://scripts/background.gd" id="4_bg"]
-[ext_resource type="Texture2D" path="res://assets/sprites/character.png" id="5_spr"]
 
 [sub_resource type="CapsuleShape2D" id="CS_player"]
 radius = 16.0
@@ -35,9 +34,7 @@ script = ExtResource("2_plyr")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CS_player")
 
-[node name="Sprite2D" type="Sprite2D" parent="Player"]
-scale = Vector2(0.333, 0.333)
-texture = ExtResource("5_spr")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
 
 [node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
 script = ExtResource("3_dusk")
