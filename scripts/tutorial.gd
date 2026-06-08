@@ -17,6 +17,7 @@ func _ready() -> void:
 		load("res://assets/sprites/backgrounds/bg_l1_night.png")
 	)
 	_show_step(0)
+	AudioManager.play_music("day")
 
 func _process(_delta: float) -> void:
 	if current_step >= STEPS.size():

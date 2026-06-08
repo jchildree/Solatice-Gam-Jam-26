@@ -41,6 +41,15 @@ func _ready() -> void:
 	DayNightManager.toggled.connect(_on_toggled)
 	load_level(current_level_index)
 
+func _process(_delta: float) -> void:
+	var b: Rect2 = LEVEL_BOUNDS[current_level_index]
+	var kill_y: float = b.position.y + b.size.y + 300.0
+	if player.global_position.y > kill_y:
+		player.global_position = checkpoint_position
+		player.reset()
+		DayNightManager.reset()
+		dusk_timer.reset_to_checkpoint(checkpoint_saved_time)
+
 func load_level(index: int) -> void:
 	for child in level_container.get_children():
 		child.queue_free()

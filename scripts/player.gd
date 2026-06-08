@@ -34,15 +34,26 @@ func _ready() -> void:
 
 func _setup_animations() -> void:
 	var frames := SpriteFrames.new()
-	var char_tex: Texture2D = load("res://assets/sprites/character.png")
-	for anim in ["idle", "run", "jump", "fall", "land", "dash"]:
-		frames.add_animation(anim)
-		frames.set_animation_speed(anim, 1.0)
-		frames.set_animation_loop(anim, anim == "idle" or anim == "run" or anim == "fall")
-		frames.add_frame(anim, char_tex)
+	_add_anim(frames, "idle", "res://assets/sprites/animations/Walking.png", range(12), 8.0, true)
+	_add_anim(frames, "run", "res://assets/sprites/animations/Running.png", range(12), 12.0, true)
+	_add_anim(frames, "jump", "res://assets/sprites/animations/Jumping.png", range(10), 14.0, false)
+	_add_anim(frames, "fall", "res://assets/sprites/animations/Falling.png", range(11), 8.0, true)
+	_add_anim(frames, "land", "res://assets/sprites/animations/Landing.png", range(6), 16.0, false)
+	_add_anim(frames, "dash", "res://assets/sprites/animations/Roll.png", range(9), 18.0, false)
 	$AnimatedSprite2D.sprite_frames = frames
 	$AnimatedSprite2D.scale = Vector2(0.4, 0.4)
 	$AnimatedSprite2D.animation_finished.connect(_on_animation_finished)
+
+func _add_anim(frames: SpriteFrames, anim: String, path: String, indices: Array, fps: float, loop: bool) -> void:
+	frames.add_animation(anim)
+	frames.set_animation_speed(anim, fps)
+	frames.set_animation_loop(anim, loop)
+	var tex: Texture2D = load(path)
+	for i in indices:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = tex
+		atlas.region = Rect2(i * 128, 0, 128, 128)
+		frames.add_frame(anim, atlas)
 
 func _on_animation_finished() -> void:
 	if $AnimatedSprite2D.animation == "land":
