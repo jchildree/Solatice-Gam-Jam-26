@@ -4,20 +4,20 @@ enum PlatformType { SOLID, DAY_ONLY, SHADOW_ONLY }
 
 @export var platform_type: PlatformType = PlatformType.SOLID
 
-const TEXTURES = {
-	PlatformType.SOLID:       "res://assets/sprites/platform_solid.svg",
-	PlatformType.DAY_ONLY:    "res://assets/sprites/platform_day.svg",
-	PlatformType.SHADOW_ONLY: "res://assets/sprites/platform_shadow.svg",
+const COLORS = {
+	PlatformType.SOLID:       Color(0.10, 0.10, 0.18),
+	PlatformType.DAY_ONLY:    Color(0.80, 0.60, 0.20),
+	PlatformType.SHADOW_ONLY: Color(0.25, 0.20, 0.45),
 }
 
 @onready var collision: CollisionShape2D = $CollisionShape2D
 @onready var sprite: Sprite2D = $Sprite2D
 
 func _ready() -> void:
-	sprite.texture = load(TEXTURES[platform_type])
-	if sprite.texture and collision.shape is RectangleShape2D:
-		var sz: Vector2 = collision.shape.size
-		sprite.scale = Vector2(sz.x / sprite.texture.get_width(), sz.y / sprite.texture.get_height())
+	var sz: Vector2 = (collision.shape as RectangleShape2D).size
+	var img := Image.create(int(sz.x), int(sz.y), false, Image.FORMAT_RGBA8)
+	img.fill(COLORS[platform_type])
+	sprite.texture = ImageTexture.create_from_image(img)
 	DayNightManager.state_changed.connect(_on_state_changed)
 	_apply_state(DayNightManager.is_day)
 
