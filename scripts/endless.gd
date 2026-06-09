@@ -100,7 +100,7 @@ func _show_exit_overlay() -> void:
 func _on_submit_pressed() -> void:
 	if _submitted:
 		return
-	var name_val := name_entry.text.strip_edges()
+	var name_val: String = name_entry.text.strip_edges()
 	if name_val == "":
 		return
 	GameSession.player_name = name_val

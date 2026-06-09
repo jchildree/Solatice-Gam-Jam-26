@@ -23,7 +23,7 @@ func _process(_delta: float) -> void:
 func _on_submit_pressed() -> void:
 	if _submitted:
 		return
-	var name_val := $VBoxContainer/NameEntry.text.strip_edges()
+	var name_val: String = $VBoxContainer/NameEntry.text.strip_edges()
 	if name_val == "":
 		return
 	GameSession.player_name = name_val
