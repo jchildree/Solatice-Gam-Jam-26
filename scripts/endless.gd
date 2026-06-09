@@ -3,7 +3,7 @@ extends Node2D
 const CHUNK_WIDTH := 640.0
 const SPAWN_LOOKAHEAD := 1280.0
 const DESPAWN_BEHIND := 1280.0
-const KILL_Y := 800.0
+const KILL_Y := 1400.0
 
 const DAY_SKY_LAYERS = [
 	"res://assets/sprites/backgrounds/sky_day_1.png",
@@ -45,8 +45,6 @@ func _ready() -> void:
 		_spawn_chunk()
 
 	camera.limit_left = -200
-	camera.limit_top = 0
-	camera.limit_bottom = 720
 	camera.limit_right = 10000000
 	player.reset()
 

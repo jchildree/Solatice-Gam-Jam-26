@@ -6,9 +6,9 @@ const MIN_PLATFORM_W := 80.0
 const MAX_PLATFORM_W := 200.0
 const MIN_GAP := 60.0
 const MAX_GAP := 160.0
-const MAX_DELTA_Y := 100.0
-const Y_MIN := 180.0
-const Y_MAX := 580.0
+const MAX_DELTA_Y := 140.0
+const Y_MIN := -300.0
+const Y_MAX := 1000.0
 
 func generate(rng: RandomNumberGenerator, entry_y: float) -> float:
 	var y := clampf(entry_y, Y_MIN, Y_MAX)
