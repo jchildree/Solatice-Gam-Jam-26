@@ -18,6 +18,7 @@ func _ready() -> void:
 	)
 	_show_step(0)
 	AudioManager.play_music("day")
+	$KillZone.body_entered.connect(_on_kill_zone_entered)
 
 func _process(_delta: float) -> void:
 	if current_step >= STEPS.size():
@@ -36,3 +37,8 @@ func _advance() -> void:
 
 func _show_step(index: int) -> void:
 	prompt_label.text = STEPS[index]["prompt"]
+
+func _on_kill_zone_entered(body: Node) -> void:
+	if body.is_in_group("player"):
+		body.global_position = Vector2(200, 340)
+		body.reset()

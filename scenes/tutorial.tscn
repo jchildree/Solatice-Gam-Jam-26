@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://tutorial01"]
+[gd_scene load_steps=6 format=3 uid="uid://tutorial01"]
 
 [ext_resource type="Script" path="res://scripts/tutorial.gd" id="1_tut"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2_plyr"]
@@ -38,6 +38,15 @@ shape = SubResource("CS_player")
 
 [node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
 script = ExtResource("3_dusk")
+
+[sub_resource type="RectangleShape2D" id="RS_kill"]
+size = Vector2(1280, 32)
+
+[node name="KillZone" type="Area2D" parent="."]
+position = Vector2(640, 500)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone"]
+shape = SubResource("RS_kill")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

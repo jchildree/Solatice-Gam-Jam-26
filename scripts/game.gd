@@ -96,6 +96,6 @@ func _on_checkpoint_reached(pos: Vector2, saved_time: float) -> void:
 func _on_level_complete() -> void:
 	current_level_index += 1
 	if current_level_index >= LEVELS.size():
-		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+		get_tree().change_scene_to_file("res://scenes/win.tscn")
 	else:
 		load_level(current_level_index)

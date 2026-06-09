@@ -15,7 +15,16 @@ func _process(_delta: float) -> void:
 	cooldown_bar.value = 1.0 - DayNightManager.get_cooldown_percent()
 
 func _on_time_updated(remaining: float, total: float) -> void:
-	timer_bar.value = remaining / total
+	var ratio := remaining / total
+	timer_bar.value = ratio
+	var color: Color
+	if ratio > 0.5:
+		color = Color(0.2, 0.8, 0.3)
+	elif ratio > 0.25:
+		color = Color(0.9, 0.7, 0.1)
+	else:
+		color = Color(0.9, 0.2, 0.1)
+	timer_bar.add_theme_color_override("fill_color", color)
 
 func _on_state_changed(is_day: bool) -> void:
 	state_label.text = "DAY" if is_day else "NIGHT"
