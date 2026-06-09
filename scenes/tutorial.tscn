@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://tutorial01"]
+[gd_scene load_steps=7 format=3 uid="uid://tutorial01"]
 
 [ext_resource type="Script" path="res://scripts/tutorial.gd" id="1_tut"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2_plyr"]
@@ -12,13 +12,14 @@ height = 64.0
 [sub_resource type="RectangleShape2D" id="RS_floor"]
 size = Vector2(1280.0, 32.0)
 
+[sub_resource type="RectangleShape2D" id="RS_kill"]
+size = Vector2(1280, 32)
+
 [node name="Tutorial" type="Node2D"]
 script = ExtResource("1_tut")
 
-[node name="Background" type="Sprite2D" parent="."]
+[node name="Background" type="Node2D" parent="."]
 script = ExtResource("4_bg")
-position = Vector2(0, 0)
-centered = false
 z_index = -10
 
 [node name="Floor" type="StaticBody2D" parent="."]
@@ -38,9 +39,6 @@ shape = SubResource("CS_player")
 
 [node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
 script = ExtResource("3_dusk")
-
-[sub_resource type="RectangleShape2D" id="RS_kill"]
-size = Vector2(1280, 32)
 
 [node name="KillZone" type="Area2D" parent="."]
 position = Vector2(640, 500)

@@ -16,9 +16,8 @@ script = ExtResource("1_game01")
 [node name="BackgroundLayer" type="CanvasLayer" parent="."]
 layer = -1
 
-[node name="Background" type="Sprite2D" parent="BackgroundLayer"]
+[node name="Background" type="Node2D" parent="BackgroundLayer"]
 script = ExtResource("5_bg01")
-centered = false
 
 [node name="LevelContainer" type="Node2D" parent="."]
 

@@ -12,10 +12,20 @@ var current_step: int = 0
 @onready var prompt_label: Label = $UI/PromptLabel
 
 func _ready() -> void:
-	$Background.set_level_textures(
-		load("res://assets/sprites/backgrounds/bg_l1_day.png"),
-		load("res://assets/sprites/backgrounds/bg_l1_night.png")
-	)
+	var day_layers: Array = [
+		"res://assets/sprites/backgrounds/sky_day_1.png",
+		"res://assets/sprites/backgrounds/sky_day_2.png",
+		"res://assets/sprites/backgrounds/sky_day_3.png",
+		"res://assets/sprites/backgrounds/sky_day_4.png",
+		"res://assets/sprites/backgrounds/sky_day_5.png",
+	].map(func(p: String) -> Texture2D: return load(p))
+	var night_layers: Array = [
+		"res://assets/sprites/backgrounds/sky_night_1.png",
+		"res://assets/sprites/backgrounds/sky_night_2.png",
+		"res://assets/sprites/backgrounds/sky_night_3.png",
+		"res://assets/sprites/backgrounds/sky_night_4.png",
+	].map(func(p: String) -> Texture2D: return load(p))
+	$Background.set_level_textures(day_layers, night_layers)
 	_show_step(0)
 	AudioManager.play_music("day")
 	$KillZone.body_entered.connect(_on_kill_zone_entered)
@@ -42,3 +52,4 @@ func _on_kill_zone_entered(body: Node) -> void:
 	if body.is_in_group("player"):
 		body.global_position = Vector2(200, 340)
 		body.reset()
+		DayNightManager.reset()

@@ -18,12 +18,19 @@ const LEVEL_BOUNDS = [
 	Rect2(0, 0, 2560, 1440),
 ]
 
-const LEVEL_BACKGROUNDS = [
-	["res://assets/sprites/backgrounds/bg_l1_day.png", "res://assets/sprites/backgrounds/bg_l1_night.png"],
-	["res://assets/sprites/backgrounds/bg_l2_day.png", "res://assets/sprites/backgrounds/bg_l2_night.png"],
-	["res://assets/sprites/backgrounds/bg_l3_day.png", "res://assets/sprites/backgrounds/bg_l3_night.png"],
-	["res://assets/sprites/backgrounds/bg_l4_day.png", "res://assets/sprites/backgrounds/bg_l4_night.png"],
-	["res://assets/sprites/backgrounds/bg_l5_day.png", "res://assets/sprites/backgrounds/bg_l5_night.png"],
+const DAY_SKY_LAYERS = [
+	"res://assets/sprites/backgrounds/sky_day_1.png",
+	"res://assets/sprites/backgrounds/sky_day_2.png",
+	"res://assets/sprites/backgrounds/sky_day_3.png",
+	"res://assets/sprites/backgrounds/sky_day_4.png",
+	"res://assets/sprites/backgrounds/sky_day_5.png",
+]
+
+const NIGHT_SKY_LAYERS = [
+	"res://assets/sprites/backgrounds/sky_night_1.png",
+	"res://assets/sprites/backgrounds/sky_night_2.png",
+	"res://assets/sprites/backgrounds/sky_night_3.png",
+	"res://assets/sprites/backgrounds/sky_night_4.png",
 ]
 
 var current_level_index: int = 0
@@ -34,7 +41,7 @@ var checkpoint_saved_time: float = 60.0
 @onready var player: CharacterBody2D = $Player
 @onready var dusk_timer: Node = $DuskTimer
 @onready var camera: Camera2D = $Player/Camera2D
-@onready var background: Sprite2D = $BackgroundLayer/Background
+@onready var background: Node2D = $BackgroundLayer/Background
 
 func _ready() -> void:
 	dusk_timer.dusk_reached.connect(_on_dusk_reached)
@@ -75,8 +82,9 @@ func load_level(index: int) -> void:
 	camera.limit_top = int(b.position.y)
 	camera.limit_right = int(b.position.x + b.size.x)
 	camera.limit_bottom = int(b.position.y + b.size.y)
-	var bg_paths: Array = LEVEL_BACKGROUNDS[index]
-	background.set_level_textures(load(bg_paths[0]), load(bg_paths[1]))
+	var day_layers: Array = DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	var night_layers: Array = NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	background.set_level_textures(day_layers, night_layers)
 	DayNightManager.reset()
 	dusk_timer.start(LEVEL_BUDGETS[index])
 

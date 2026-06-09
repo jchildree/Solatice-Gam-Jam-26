@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://solstice_endless"]
+
+[ext_resource type="Script" path="res://scripts/endless.gd" id="1_end"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="2_plyr"]
+[ext_resource type="Script" path="res://scripts/background.gd" id="3_bg"]
+
+[sub_resource type="CapsuleShape2D" id="CS_player"]
+radius = 16.0
+height = 64.0
+
+[node name="Endless" type="Node2D"]
+script = ExtResource("1_end")
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Background" type="Node2D" parent="BackgroundLayer"]
+script = ExtResource("3_bg")
+
+[node name="ChunkContainer" type="Node2D" parent="."]
+
+[node name="Player" type="CharacterBody2D" parent="." groups=["player"]]
+position = Vector2(100, 360)
+script = ExtResource("2_plyr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CS_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 5.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="ScoreLabel" type="Label" parent="UI"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 300.0
+offset_bottom = 36.0
+text = "Distance: 0m"
+theme_override_font_sizes/font_size = 20
+
+[node name="HintLabel" type="Label" parent="UI"]
+anchor_right = 1.0
+offset_top = 8.0
+offset_bottom = 36.0
+horizontal_alignment = 2
+text = "Esc - Menu"
+theme_override_font_sizes/font_size = 14

@@ -40,10 +40,10 @@ func _ready() -> void:
 func play_music(key: String) -> void:
 	if key == _current_music:
 		return
-	_current_music = key
 	var path: String = MUSIC_FILES.get(key, "")
 	if path == "" or not ResourceLoader.exists(path):
 		return
+	_current_music = key
 	var stream: AudioStreamMP3 = load(path)
 	stream.loop = true
 	_music.stream = stream

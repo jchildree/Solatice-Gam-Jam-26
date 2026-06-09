@@ -105,6 +105,7 @@ func reset() -> void:
 	_was_on_floor = true
 	_squash_timer = 0.0
 	_bob_time = 0.0
+	_block_toggle = true
 	$Sprite2D.scale = BASE_SCALE
 	$Sprite2D.rotation = 0.0
 	$Sprite2D.position.y = 0.0
