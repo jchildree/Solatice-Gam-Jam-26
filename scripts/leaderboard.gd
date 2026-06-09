@@ -1,9 +1,9 @@
 extends Node
 
-const _TIME_PRIV := "YOUR_TIME_PRIVATE_KEY"
-const _TIME_PUB := "YOUR_TIME_PUBLIC_KEY"
-const _DIST_PRIV := "YOUR_DIST_PRIVATE_KEY"
-const _DIST_PUB := "YOUR_DIST_PUBLIC_KEY"
+const _TIME_PRIV := "B5dPJ74M6kWxbY77FOjY0g46GFvrz93kCvIJSVjD0nuA"
+const _TIME_PUB := "6a28628e8f40bb17b0924f49"
+const _DIST_PRIV := "bTidzlnIr0KhoxJehhEidAbGGpMUO_REqNcAMPUFR8FQ"
+const _DIST_PUB := "6a2860018f40bb17b09231bf"
 
 signal scores_received(board: String, entries: Array)
 
