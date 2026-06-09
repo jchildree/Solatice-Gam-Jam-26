@@ -58,6 +58,9 @@ func _process(_delta: float) -> void:
 		dusk_timer.reset_to_checkpoint(checkpoint_saved_time)
 
 func load_level(index: int) -> void:
+	if index == 0:
+		GameSession.start_run()
+
 	for child in level_container.get_children():
 		child.queue_free()
 
@@ -104,6 +107,7 @@ func _on_checkpoint_reached(pos: Vector2, saved_time: float) -> void:
 func _on_level_complete() -> void:
 	current_level_index += 1
 	if current_level_index >= LEVELS.size():
+		GameSession.stop_run()
 		get_tree().change_scene_to_file("res://scenes/win.tscn")
 	else:
 		load_level(current_level_index)

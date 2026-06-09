@@ -24,6 +24,8 @@ config/run/main_scene="res://scenes/main_menu.tscn"
 
 DayNightManager="*res://scripts/day_night_manager.gd"
 AudioManager="*res://scripts/audio_manager.gd"
+GameSession="*res://scripts/game_session.gd"
+Leaderboard="*res://scripts/leaderboard.gd"
 
 [configuration]
 
