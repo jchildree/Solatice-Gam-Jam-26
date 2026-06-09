@@ -28,7 +28,7 @@ script = ExtResource("2_plyr01")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CS_player")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position_smoothing_enabled = true

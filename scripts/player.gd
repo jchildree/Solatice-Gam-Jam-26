@@ -26,38 +26,16 @@ const APEX_GRAVITY_MULT = 0.69
 const APEX_THRESHOLD = 80.0
 
 var _block_toggle: bool = false
-var _landing: bool = false
+var _bob_time: float = 0.0
+var _squash_timer: float = 0.0
+
+const BASE_SCALE := Vector2(0.4, 0.4)
+const SQUASH_DURATION := 0.18
 
 func _ready() -> void:
 	_block_toggle = true
-	_setup_animations()
-
-func _setup_animations() -> void:
-	var frames := SpriteFrames.new()
-	_add_anim(frames, "idle", "res://assets/sprites/animations/Walking.png", range(12), 8.0, true)
-	_add_anim(frames, "run", "res://assets/sprites/animations/Running.png", range(12), 12.0, true)
-	_add_anim(frames, "jump", "res://assets/sprites/animations/Jumping.png", range(10), 14.0, false)
-	_add_anim(frames, "fall", "res://assets/sprites/animations/Falling.png", range(11), 8.0, true)
-	_add_anim(frames, "land", "res://assets/sprites/animations/Landing.png", range(6), 16.0, false)
-	_add_anim(frames, "dash", "res://assets/sprites/animations/Roll.png", range(9), 18.0, false)
-	$AnimatedSprite2D.sprite_frames = frames
-	$AnimatedSprite2D.scale = Vector2(0.4, 0.4)
-	$AnimatedSprite2D.animation_finished.connect(_on_animation_finished)
-
-func _add_anim(frames: SpriteFrames, anim: String, path: String, indices: Array, fps: float, loop: bool) -> void:
-	frames.add_animation(anim)
-	frames.set_animation_speed(anim, fps)
-	frames.set_animation_loop(anim, loop)
-	var tex: Texture2D = load(path)
-	for i in indices:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = tex
-		atlas.region = Rect2(i * 128, 0, 128, 128)
-		frames.add_frame(anim, atlas)
-
-func _on_animation_finished() -> void:
-	if $AnimatedSprite2D.animation == "land":
-		_landing = false
+	$Sprite2D.texture = load("res://assets/sprites/character.png")
+	$Sprite2D.scale = BASE_SCALE
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
@@ -86,19 +64,19 @@ func _physics_process(delta: float) -> void:
 			velocity.x = dir * SPEED
 		if dir != 0:
 			last_dir = dir
-			$AnimatedSprite2D.flip_h = dir < 0
+			$Sprite2D.flip_h = dir < 0
 
 		if jump_buffer_timer > 0:
 			if coyote_timer > 0:
 				velocity.y = JUMP_VELOCITY
-				_on_jump()
+				_squash_timer = 0.0
 				coyote_timer = 0.0
 				jump_buffer_timer = 0.0
 				AudioManager.play_sfx("jump")
 			elif is_on_wall():
 				var normal := get_wall_normal()
 				velocity = Vector2(normal.x * WALL_JUMP_H, WALL_JUMP_V)
-				_on_jump()
+				_squash_timer = 0.0
 				jump_buffer_timer = 0.0
 				wall_jump_lockout = WALL_JUMP_LOCKOUT_TIME
 				AudioManager.play_sfx("jump")
@@ -111,10 +89,10 @@ func _physics_process(delta: float) -> void:
 
 	if not _was_on_floor and is_on_floor():
 		AudioManager.play_sfx("land")
-		_on_land()
+		_squash_timer = SQUASH_DURATION
 	_was_on_floor = is_on_floor()
 
-	_update_animation()
+	_update_sprite(delta)
 
 func reset() -> void:
 	velocity = Vector2.ZERO
@@ -125,34 +103,41 @@ func reset() -> void:
 	coyote_timer = 0.0
 	jump_buffer_timer = 0.0
 	_was_on_floor = true
-	_landing = false
-	$AnimatedSprite2D.play("idle")
+	_squash_timer = 0.0
+	_bob_time = 0.0
+	$Sprite2D.scale = BASE_SCALE
+	$Sprite2D.rotation = 0.0
+	$Sprite2D.position.y = 0.0
 
-func _on_jump() -> void:
-	_landing = false
+func _update_sprite(delta: float) -> void:
+	_bob_time += delta
+	var target_scale := BASE_SCALE
+	var target_rot := 0.0
+	var target_y := 0.0
 
-func _on_land() -> void:
-	_landing = true
-	$AnimatedSprite2D.play("land")
-
-func _update_animation() -> void:
-	if _landing:
-		return
-	if is_dashing:
-		_play_anim("dash")
+	if _squash_timer > 0.0:
+		_squash_timer -= delta
+		var t := clampf(_squash_timer / SQUASH_DURATION, 0.0, 1.0)
+		target_scale = BASE_SCALE.lerp(Vector2(BASE_SCALE.x * 1.35, BASE_SCALE.y * 0.7), t)
+	elif is_dashing:
+		target_scale = Vector2(BASE_SCALE.x * 1.4, BASE_SCALE.y * 0.75)
+		target_rot = last_dir * 0.12
 	elif not is_on_floor():
 		if velocity.y < -50.0:
-			_play_anim("jump")
+			target_scale = Vector2(BASE_SCALE.x * 0.82, BASE_SCALE.y * 1.18)
+			target_rot = -last_dir * 0.06
 		else:
-			_play_anim("fall")
+			target_scale = Vector2(BASE_SCALE.x * 1.05, BASE_SCALE.y * 0.95)
+			target_rot = last_dir * 0.06
 	elif abs(velocity.x) > 10.0:
-		_play_anim("run")
+		target_y = sin(_bob_time * 12.0) * 3.0
+		target_rot = velocity.x / SPEED * 0.08
 	else:
-		_play_anim("idle")
+		target_y = sin(_bob_time * 2.5) * 1.5
 
-func _play_anim(anim: String) -> void:
-	if $AnimatedSprite2D.animation != anim:
-		$AnimatedSprite2D.play(anim)
+	$Sprite2D.scale = $Sprite2D.scale.lerp(target_scale, delta * 18.0)
+	$Sprite2D.rotation = lerp($Sprite2D.rotation, target_rot, delta * 14.0)
+	$Sprite2D.position.y = lerp($Sprite2D.position.y, target_y, delta * 20.0)
 
 func _handle_dash(delta: float) -> void:
 	if dash_cooldown_timer > 0:

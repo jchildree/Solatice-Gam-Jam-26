@@ -52,42 +52,42 @@ saved_time = 24.0
 shape = SubResource("CS_chk")
 
 [node name="ShadowPlatform3" parent="." instance=ExtResource("1_plat")]
-position = Vector2(1400, 880)
+position = Vector2(1400, 900)
 platform_type = 2
 
 [node name="DayPlatform3" parent="." instance=ExtResource("1_plat")]
-position = Vector2(1640, 780)
+position = Vector2(1640, 820)
 platform_type = 1
 
 [node name="ShadowPlatform4" parent="." instance=ExtResource("1_plat")]
-position = Vector2(1880, 680)
+position = Vector2(1880, 740)
 platform_type = 2
 
 [node name="SolidPlatform2" parent="." instance=ExtResource("1_plat")]
-position = Vector2(2100, 580)
+position = Vector2(2100, 660)
 platform_type = 0
 
 [node name="Checkpoint2" parent="." instance=ExtResource("3_chk")]
-position = Vector2(2100, 550)
+position = Vector2(2100, 630)
 saved_time = 17.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Checkpoint2"]
 shape = SubResource("CS_chk")
 
 [node name="DayPlatform4" parent="." instance=ExtResource("1_plat")]
-position = Vector2(2260, 480)
+position = Vector2(2260, 580)
 platform_type = 1
 
 [node name="ShadowPlatform5" parent="." instance=ExtResource("1_plat")]
-position = Vector2(2380, 380)
+position = Vector2(2380, 500)
 platform_type = 2
 
 [node name="DayPlatform5" parent="." instance=ExtResource("1_plat")]
-position = Vector2(2460, 280)
+position = Vector2(2460, 420)
 platform_type = 1
 
 [node name="ExitPortal" parent="." instance=ExtResource("2_exit")]
-position = Vector2(2460, 230)
+position = Vector2(2460, 370)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitPortal"]
 shape = SubResource("CS_exit")

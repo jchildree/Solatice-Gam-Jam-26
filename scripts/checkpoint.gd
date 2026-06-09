@@ -12,6 +12,6 @@ func _on_body_entered(body: Node) -> void:
 	if activated or not body.is_in_group("player"):
 		return
 	activated = true
-	emit_signal("checkpoint_reached", global_position, saved_time)
+	emit_signal("checkpoint_reached", global_position + Vector2(0.0, -52.0), saved_time)
 	modulate = Color.YELLOW
 	AudioManager.play_sfx("checkpoint")

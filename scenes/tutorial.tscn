@@ -34,7 +34,7 @@ script = ExtResource("2_plyr")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CS_player")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
 
 [node name="DuskTimer" type="Node" parent="." groups=["dusk_timer"]]
 script = ExtResource("3_dusk")

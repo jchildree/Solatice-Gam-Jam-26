@@ -29,11 +29,11 @@ position = Vector2(220, 570)
 platform_type = 2
 
 [node name="DayPlatform1" parent="." instance=ExtResource("1_plat")]
-position = Vector2(420, 530)
+position = Vector2(360, 530)
 platform_type = 1
 
 [node name="ShadowPlatform2" parent="." instance=ExtResource("1_plat")]
-position = Vector2(640, 490)
+position = Vector2(540, 490)
 platform_type = 2
 
 [node name="DayPlatform2" parent="." instance=ExtResource("1_plat")]
