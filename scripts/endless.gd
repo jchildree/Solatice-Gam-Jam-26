@@ -5,19 +5,8 @@ const SPAWN_LOOKAHEAD := 1280.0
 const DESPAWN_BEHIND := 1280.0
 const KILL_Y := 1400.0
 
-const DAY_SKY_LAYERS = [
-	"res://assets/sprites/backgrounds/sky_day_1.png",
-	"res://assets/sprites/backgrounds/sky_day_2.png",
-	"res://assets/sprites/backgrounds/sky_day_3.png",
-	"res://assets/sprites/backgrounds/sky_day_4.png",
-	"res://assets/sprites/backgrounds/sky_day_5.png",
-]
-const NIGHT_SKY_LAYERS = [
-	"res://assets/sprites/backgrounds/sky_night_1.png",
-	"res://assets/sprites/backgrounds/sky_night_2.png",
-	"res://assets/sprites/backgrounds/sky_night_3.png",
-	"res://assets/sprites/backgrounds/sky_night_4.png",
-]
+const PLATFORM_SCRIPT := preload("res://scripts/platform.gd")
+const CHUNK_SCRIPT := preload("res://scripts/endless_chunk.gd")
 
 @onready var background: Node2D = $BackgroundLayer/Background
 @onready var chunk_container: Node2D = $ChunkContainer
@@ -42,8 +31,8 @@ var _best_distance: int = 0
 
 func _ready() -> void:
 	_rng.randomize()
-	var day_layers: Array = DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	var night_layers: Array = NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	var day_layers: Array = GameSession.DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	var night_layers: Array = GameSession.NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
 	background.set_level_textures(day_layers, night_layers)
 	DayNightManager.reset()
 	AudioManager.play_music("day")
@@ -87,7 +76,7 @@ func _process(_delta: float) -> void:
 	var dist := int(player.global_position.x / 50.0)
 	if dist > _best_distance:
 		_best_distance = dist
-	score_label.text = "Distance: " + str(dist) + "m"
+	score_label.text = "Distance: " + str(max(0, dist)) + "m"
 
 	if Input.is_action_just_pressed("ui_cancel"):
 		_show_exit_overlay()
@@ -125,7 +114,7 @@ func _on_menu_pressed() -> void:
 
 func _place_spawn_platform() -> void:
 	var body := StaticBody2D.new()
-	body.set_script(load("res://scripts/platform.gd"))
+	body.set_script(PLATFORM_SCRIPT)
 	body.set("platform_type", 0)
 	var cshape := CollisionShape2D.new()
 	cshape.name = "CollisionShape2D"
@@ -141,7 +130,7 @@ func _place_spawn_platform() -> void:
 
 func _spawn_chunk() -> void:
 	var chunk := Node2D.new()
-	chunk.set_script(load("res://scripts/endless_chunk.gd"))
+	chunk.set_script(CHUNK_SCRIPT)
 	chunk.position.x = _next_chunk_x
 	chunk_container.add_child(chunk)
 	_entry_y = chunk.generate(_rng, _entry_y)

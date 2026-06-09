@@ -1,5 +1,7 @@
 extends Node2D
 
+const PLATFORM_SCRIPT := preload("res://scripts/platform.gd")
+
 const CHUNK_WIDTH := 640.0
 const PLATFORM_H := 16.0
 const MIN_PLATFORM_W := 80.0
@@ -44,7 +46,7 @@ func _pick_type(rng: RandomNumberGenerator) -> int:
 
 func _make_platform(x: float, y: float, width: float, ptype: int) -> void:
 	var body := StaticBody2D.new()
-	body.set_script(load("res://scripts/platform.gd"))
+	body.set_script(PLATFORM_SCRIPT)
 	body.set("platform_type", ptype)
 
 	var cshape := CollisionShape2D.new()

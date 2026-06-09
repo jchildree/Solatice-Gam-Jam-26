@@ -27,6 +27,8 @@ func set_level_textures(day_layers: Array, night_layers: Array) -> void:
 
 	for i in day_layers.size():
 		var tex: Texture2D = day_layers[i]
+		if tex == null:
+			continue
 		var group: Array = []
 		for j in 2:
 			var s := Sprite2D.new()
@@ -41,6 +43,8 @@ func set_level_textures(day_layers: Array, night_layers: Array) -> void:
 
 	for i in night_layers.size():
 		var tex: Texture2D = night_layers[i]
+		if tex == null:
+			continue
 		var group: Array = []
 		for j in 2:
 			var s := Sprite2D.new()

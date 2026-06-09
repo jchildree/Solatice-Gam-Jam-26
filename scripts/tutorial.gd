@@ -12,19 +12,8 @@ var current_step: int = 0
 @onready var prompt_label: Label = $UI/PromptLabel
 
 func _ready() -> void:
-	var day_layers: Array = [
-		"res://assets/sprites/backgrounds/sky_day_1.png",
-		"res://assets/sprites/backgrounds/sky_day_2.png",
-		"res://assets/sprites/backgrounds/sky_day_3.png",
-		"res://assets/sprites/backgrounds/sky_day_4.png",
-		"res://assets/sprites/backgrounds/sky_day_5.png",
-	].map(func(p: String) -> Texture2D: return load(p))
-	var night_layers: Array = [
-		"res://assets/sprites/backgrounds/sky_night_1.png",
-		"res://assets/sprites/backgrounds/sky_night_2.png",
-		"res://assets/sprites/backgrounds/sky_night_3.png",
-		"res://assets/sprites/backgrounds/sky_night_4.png",
-	].map(func(p: String) -> Texture2D: return load(p))
+	var day_layers: Array = GameSession.DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	var night_layers: Array = GameSession.NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
 	$Background.set_level_textures(day_layers, night_layers)
 	_show_step(0)
 	AudioManager.play_music("day")

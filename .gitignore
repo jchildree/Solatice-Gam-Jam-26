@@ -21,6 +21,19 @@ Thumbs.db
 desktop.ini
 __MACOSX/
 
+# Unused editor addons and their package extras extracted to repo root
+# (vaporwavesky README/LICENSE/icon/preview, limboai demo, scratch scenes)
+addons/
+demo/
+/LICENSE
+/README.md
+/icon.png
+/icon.png.import
+/preview.png
+/preview.png.import
+/control.tscn
+/test_scene.tscn
+
 # Craftpix asset pack extras extracted to repo root
 1. NEW CLOUDS/
 2. NEW CLOUDS/

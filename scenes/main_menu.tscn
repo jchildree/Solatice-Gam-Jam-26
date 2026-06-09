@@ -56,5 +56,25 @@ text = "QUIT"
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1329401376]
 libraries/ = SubResource("AnimationLibrary_ekxnf")
 
+[node name="TimeLeaderboardLabel" type="Label" parent="." unique_id=234567890]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 220.0
+offset_bottom = 200.0
+autowrap_mode = 3
+text = "Top Times:\nLoading..."
+
+[node name="DistLeaderboardLabel" type="Label" parent="." unique_id=345678901]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 200.0
+autowrap_mode = 3
+text = "Top Distances:\nLoading..."
+
 [connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_pressed"]
