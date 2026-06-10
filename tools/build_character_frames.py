@@ -1,4 +1,4 @@
-"""Convert silhouette animation sheets into pixel-art sheets using character.png palette."""
+"""Convert flat-color animation sheets into pixel-art sheets using character.png palette."""
 import os
 from collections import Counter
 from PIL import Image
@@ -9,18 +9,33 @@ OUT_DIR = os.path.join(ANIM_DIR, "processed")
 CHAR_PNG = os.path.join(ROOT, "assets", "sprites", "character.png")
 
 FRAME = 128
-OUT_FRAME = 48
+OUT_FRAME = 72
+HEAD_H = 15
+CAP_ROWS = 7
+BRIM_ROWS = 3
+BRIM_LEN = 6
+SHOE_BAND = 0.09
+FAR_MUL = 0.72
+
+# Source sheets use exactly these five flat colors to mark body parts.
+SRC_ROLES = {
+    (201, 212, 253): "ht",
+    (94, 113, 142): "arm_near",
+    (27, 36, 71): "arm_far",
+    (138, 161, 246): "leg_near",
+    (44, 52, 56): "leg_far",
+}
 
 SHEETS = ["Walking", "Running", "Jumping", "Falling", "Landing", "Roll"]
 
 EXPECTED = {
-    "Idle.png": (48, 48),
-    "Walking.png": (576, 48),
-    "Running.png": (576, 48),
-    "Jumping.png": (480, 48),
-    "Falling.png": (528, 48),
-    "Landing.png": (288, 48),
-    "Roll.png": (432, 48),
+    "Idle.png": (72, 72),
+    "Walking.png": (864, 72),
+    "Running.png": (864, 72),
+    "Jumping.png": (720, 72),
+    "Falling.png": (792, 72),
+    "Landing.png": (432, 72),
+    "Roll.png": (648, 72),
 }
 
 
@@ -56,73 +71,105 @@ def sample_palette():
     return pal
 
 
-def luminance(p):
-    return 0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2]
+def darken(color, mul):
+    return tuple(int(c * mul) for c in color)
 
 
-def shade(color, lum, lum_min, lum_max):
-    # map source luminance to 0.6-1.0 so near/far limbs still read
-    span = max(lum_max - lum_min, 1.0)
-    t = 0.6 + 0.4 * (lum - lum_min) / span
-    return tuple(min(255, int(round(c * t))) for c in color)
+def classify(rgb):
+    best_role, best_d = None, None
+    for src, role in SRC_ROLES.items():
+        d = sum((a - b) ** 2 for a, b in zip(src, rgb))
+        if best_d is None or d < best_d:
+            best_role, best_d = role, d
+    return best_role
 
 
-def frame_stats(px, fw, fh):
-    xs, ys, lums = [], [], []
-    for y in range(fh):
-        for x in range(fw):
+def analyze(px):
+    ys, ht_xs, ht_ys = [], [], []
+    for y in range(FRAME):
+        for x in range(FRAME):
             p = px[x, y]
-            if p[3] > 0:
-                xs.append(x)
-                ys.append(y)
-                lums.append(luminance(p))
-    if not xs:
+            if p[3] <= 200:
+                continue
+            ys.append(y)
+            if classify(p[:3]) == "ht":
+                ht_xs.append(x)
+                ht_ys.append(y)
+    if not ys or not ht_xs:
         return None
-    lums.sort()
-    return (min(ys), max(ys), lums[0], lums[-1], lums[len(lums) // 2])
+    ht_y0 = min(ht_ys)
+    top_xs = [x for x, y in zip(ht_xs, ht_ys) if y < ht_y0 + 8]
+    return {
+        "y1": max(ys),
+        "h": max(ys) - min(ys) + 1,
+        "ht_y0": ht_y0,
+        "ht_h": max(ht_ys) - ht_y0 + 1,
+        "ht_w": max(ht_xs) - min(ht_xs) + 1,
+        "topx0": min(top_xs),
+        "topx1": max(top_xs),
+    }
 
 
-def recolor_upright(frame, pal):
+def draw_brim(px, info, pal):
+    hx0 = info["topx0"] - 2
+    hx1 = info["topx1"] + 3
+    for y in range(info["ht_y0"] + CAP_ROWS - BRIM_ROWS, info["ht_y0"] + CAP_ROWS):
+        edge = None
+        for x in range(max(hx0, 0), min(hx1 + 1, FRAME)):
+            if px[x, y][3] > 0:
+                edge = x
+        if edge is None:
+            continue
+        for x in range(edge + 1, min(edge + 1 + BRIM_LEN, FRAME)):
+            if px[x, y][3] > 0:
+                break
+            px[x, y] = pal["cap"] + (255,)
+
+
+def recolor_frame(frame, pal, allow_cap):
     px = frame.load()
-    stats = frame_stats(px, FRAME, FRAME)
-    if stats is None:
+    info = analyze(px)
+    if info is None:
         return frame
-    y0, y1, lmin, lmax, _ = stats
-    bh = max(y1 - y0, 1)
+    skin_far = darken(pal["skin"], FAR_MUL)
+    jeans_far = darken(pal["jeans"], FAR_MUL)
+    topw = info["topx1"] - info["topx0"] + 1
+    # Head crown is ~11px wide when upright; tumble frames measure 23-41.
+    upright = (
+        allow_cap
+        and topw <= 18
+        and info["ht_h"] >= 20
+        and info["ht_h"] >= 0.9 * info["ht_w"]
+    )
+    shoe_y = info["y1"] - round(SHOE_BAND * info["h"])
+    head_y1 = info["ht_y0"] + HEAD_H
+    cap_y1 = info["ht_y0"] + CAP_ROWS
+    hx0 = info["topx0"] - 2
+    hx1 = info["topx1"] + 3
     for y in range(FRAME):
         for x in range(FRAME):
             p = px[x, y]
             if p[3] == 0:
                 continue
-            rel = (y - y0) / bh
-            if rel < 0.10:
-                color = pal["cap"]
-            elif rel < 0.20:
+            role = classify(p[:3])
+            if role == "arm_near":
                 color = pal["skin"]
-            elif rel < 0.55:
-                color = pal["shirt"]
-            elif rel < 0.90:
-                color = pal["jeans"]
+            elif role == "arm_far":
+                color = skin_far
+            elif role in ("leg_near", "leg_far"):
+                if y >= shoe_y:
+                    color = pal["shoes"]
+                elif role == "leg_near":
+                    color = pal["jeans"]
+                else:
+                    color = jeans_far
+            elif upright and y < head_y1 and hx0 <= x <= hx1:
+                color = pal["cap"] if y < cap_y1 else pal["skin"]
             else:
-                color = pal["shoes"]
-            px[x, y] = shade(color, luminance(p), lmin, lmax) + (p[3],)
-    return frame
-
-
-def recolor_roll(frame, pal):
-    px = frame.load()
-    stats = frame_stats(px, FRAME, FRAME)
-    if stats is None:
-        return frame
-    _, _, lmin, lmax, lmed = stats
-    for y in range(FRAME):
-        for x in range(FRAME):
-            p = px[x, y]
-            if p[3] == 0:
-                continue
-            lum = luminance(p)
-            color = pal["shirt"] if lum > lmed else pal["jeans"]
-            px[x, y] = shade(color, lum, lmin, lmax) + (p[3],)
+                color = pal["shirt"]
+            px[x, y] = color + (p[3],)
+    if upright:
+        draw_brim(px, info, pal)
     return frame
 
 
@@ -133,12 +180,10 @@ def process_sheet(name, pal):
     n = w // FRAME
     out = Image.new("RGBA", (n * OUT_FRAME, OUT_FRAME), (0, 0, 0, 0))
     small_frames = []
+    allow_cap = name != "Roll"
     for i in range(n):
         frame = sheet.crop((i * FRAME, 0, (i + 1) * FRAME, FRAME))
-        if name == "Roll":
-            frame = recolor_roll(frame, pal)
-        else:
-            frame = recolor_upright(frame, pal)
+        frame = recolor_frame(frame, pal, allow_cap)
         small = frame.resize((OUT_FRAME, OUT_FRAME), Image.NEAREST)
         small_frames.append(small)
         out.paste(small, (i * OUT_FRAME, 0))

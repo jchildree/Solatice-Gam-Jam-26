@@ -29,17 +29,17 @@ var _block_toggle: bool = false
 var _bob_time: float = 0.0
 var _squash_timer: float = 0.0
 
-const ANIM_SCALE := Vector2(3.5, 3.5)
-const ANIM_Y_OFFSET := -50.0
+const ANIM_SCALE := Vector2(3.0, 3.0)
+const ANIM_Y_OFFSET := -76.0
 const SQUASH_DURATION := 0.18
-const FRAME_SIZE := 48
+const FRAME_SIZE := 72
 const NIGHT_TINT := Color(0.62, 0.66, 0.85)
 
 const ANIM_DEFS := {
 	"idle": {"sheet": "Idle", "frames": 1, "fps": 1.0, "loop": true},
 	"run": {"sheet": "Running", "frames": 12, "fps": 14.0, "loop": true},
 	"jump": {"sheet": "Jumping", "frames": 10, "fps": 12.0, "loop": false},
-	"fall": {"sheet": "Falling", "frames": 11, "fps": 12.0, "loop": true},
+	"fall": {"sheet": "Falling", "frames": 6, "fps": 12.0, "loop": true},
 	"land": {"sheet": "Landing", "frames": 6, "fps": 18.0, "loop": false},
 	"roll": {"sheet": "Roll", "frames": 9, "fps": 9.0 / DASH_DURATION, "loop": false},
 }
@@ -51,6 +51,7 @@ func _ready() -> void:
 	$Sprite2D.visible = false
 	_anim = AnimatedSprite2D.new()
 	_anim.sprite_frames = _build_frames()
+	_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_anim.scale = ANIM_SCALE
 	_anim.position.y = ANIM_Y_OFFSET
 	add_child(_anim)
