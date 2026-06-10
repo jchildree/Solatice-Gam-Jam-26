@@ -17,7 +17,7 @@ func generate(rng: RandomNumberGenerator, entry_y: float) -> float:
 	var x := 0.0
 
 	var start_w := rng.randf_range(MIN_PLATFORM_W, MAX_PLATFORM_W)
-	_make_platform(x, y, start_w, 0)
+	_make_platform(x, y, start_w, PLATFORM_SCRIPT.PlatformType.SOLID)
 	x += start_w
 
 	var count := rng.randi_range(2, 4)
@@ -38,11 +38,11 @@ func generate(rng: RandomNumberGenerator, entry_y: float) -> float:
 func _pick_type(rng: RandomNumberGenerator) -> int:
 	var r := rng.randf()
 	if r < 0.60:
-		return 0
+		return PLATFORM_SCRIPT.PlatformType.SOLID
 	elif r < 0.80:
-		return 1
+		return PLATFORM_SCRIPT.PlatformType.DAY_ONLY
 	else:
-		return 2
+		return PLATFORM_SCRIPT.PlatformType.SHADOW_ONLY
 
 func _make_platform(x: float, y: float, width: float, ptype: int) -> void:
 	var body := StaticBody2D.new()

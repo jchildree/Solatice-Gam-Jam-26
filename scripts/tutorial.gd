@@ -12,9 +12,7 @@ var current_step: int = 0
 @onready var prompt_label: Label = $UI/PromptLabel
 
 func _ready() -> void:
-	var day_layers: Array = GameSession.DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	var night_layers: Array = GameSession.NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	$Background.set_level_textures(day_layers, night_layers)
+	$Background.set_level_textures(GameSession.day_sky_textures(), GameSession.night_sky_textures())
 	_show_step(0)
 	AudioManager.play_music("day")
 	$KillZone.body_entered.connect(_on_kill_zone_entered)
@@ -39,6 +37,4 @@ func _show_step(index: int) -> void:
 
 func _on_kill_zone_entered(body: Node) -> void:
 	if body.is_in_group("player"):
-		body.global_position = Vector2(200, 340)
-		body.reset()
-		DayNightManager.reset()
+		GameSession.respawn_player(body, Vector2(200, 340))

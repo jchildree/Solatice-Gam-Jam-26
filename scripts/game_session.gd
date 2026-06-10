@@ -19,6 +19,23 @@ var run_elapsed_ms: int = 0
 
 var _start_ticks: int = 0
 var _running: bool = false
+var _day_sky_textures: Array = []
+var _night_sky_textures: Array = []
+
+func respawn_player(player: Node, position: Vector2) -> void:
+	player.global_position = position
+	player.reset()
+	DayNightManager.reset()
+
+func day_sky_textures() -> Array:
+	if _day_sky_textures.is_empty():
+		_day_sky_textures = DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	return _day_sky_textures
+
+func night_sky_textures() -> Array:
+	if _night_sky_textures.is_empty():
+		_night_sky_textures = NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
+	return _night_sky_textures
 
 func start_run() -> void:
 	run_elapsed_ms = 0

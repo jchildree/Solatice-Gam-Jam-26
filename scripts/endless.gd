@@ -1,6 +1,5 @@
 extends Node2D
 
-const CHUNK_WIDTH := 640.0
 const SPAWN_LOOKAHEAD := 1280.0
 const DESPAWN_BEHIND := 1280.0
 const KILL_Y := 1400.0
@@ -31,9 +30,7 @@ var _best_distance: int = 0
 
 func _ready() -> void:
 	_rng.randomize()
-	var day_layers: Array = GameSession.DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	var night_layers: Array = GameSession.NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	background.set_level_textures(day_layers, night_layers)
+	background.set_level_textures(GameSession.day_sky_textures(), GameSession.night_sky_textures())
 	DayNightManager.reset()
 	AudioManager.play_music("day")
 
@@ -50,7 +47,6 @@ func _ready() -> void:
 
 	submit_btn.pressed.connect(_on_submit_pressed)
 	menu_btn.pressed.connect(_on_menu_pressed)
-	Leaderboard.scores_received.connect(_on_scores_received)
 
 func _process(_delta: float) -> void:
 	if _done:
@@ -97,16 +93,9 @@ func _on_submit_pressed() -> void:
 	submit_btn.disabled = true
 	lb_label.text = "Submitting..."
 	Leaderboard.submit("distance", name_val, _best_distance)
-	Leaderboard.fetch("distance", 10)
-
-func _on_scores_received(board: String, entries: Array) -> void:
-	if board != "distance":
-		return
-	var lines := ["Top Distances:"]
-	for i in entries.size():
-		var e: Dictionary = entries[i]
-		lines.append("%d. %-16s %dm" % [i + 1, e["name"], e["score"]])
-	lb_label.text = "\n".join(lines)
+	Leaderboard.fetch_top_text("distance", 10, func(text: String) -> void:
+		lb_label.text = "Top Distances:\n" + text
+	)
 
 func _on_menu_pressed() -> void:
 	_done = true
@@ -115,7 +104,7 @@ func _on_menu_pressed() -> void:
 func _place_spawn_platform() -> void:
 	var body := StaticBody2D.new()
 	body.set_script(PLATFORM_SCRIPT)
-	body.set("platform_type", 0)
+	body.set("platform_type", PLATFORM_SCRIPT.PlatformType.SOLID)
 	var cshape := CollisionShape2D.new()
 	cshape.name = "CollisionShape2D"
 	var rect := RectangleShape2D.new()
@@ -135,14 +124,14 @@ func _spawn_chunk() -> void:
 	chunk_container.add_child(chunk)
 	_entry_y = chunk.generate(_rng, _entry_y)
 	_chunks.append(chunk)
-	_next_chunk_x += CHUNK_WIDTH
+	_next_chunk_x += CHUNK_SCRIPT.CHUNK_WIDTH
 
 func _despawn_old_chunks() -> void:
 	var cutoff := player.global_position.x - DESPAWN_BEHIND
 	var i := 0
 	while i < _chunks.size():
 		var c: Node2D = _chunks[i]
-		if c.position.x + CHUNK_WIDTH < cutoff:
+		if c.position.x + CHUNK_SCRIPT.CHUNK_WIDTH < cutoff:
 			c.queue_free()
 			_chunks.remove_at(i)
 		else:

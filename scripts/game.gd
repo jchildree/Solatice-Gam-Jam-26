@@ -38,9 +38,7 @@ func _process(_delta: float) -> void:
 	var b: Rect2 = LEVEL_BOUNDS[current_level_index]
 	var kill_y: float = b.position.y + b.size.y + 300.0
 	if player.global_position.y > kill_y:
-		player.global_position = checkpoint_position
-		player.reset()
-		DayNightManager.reset()
+		GameSession.respawn_player(player, checkpoint_position)
 		dusk_timer.reset_to_checkpoint(checkpoint_saved_time)
 
 func load_level(index: int) -> void:
@@ -71,16 +69,12 @@ func load_level(index: int) -> void:
 	camera.limit_top = int(b.position.y)
 	camera.limit_right = int(b.position.x + b.size.x)
 	camera.limit_bottom = int(b.position.y + b.size.y)
-	var day_layers: Array = GameSession.DAY_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	var night_layers: Array = GameSession.NIGHT_SKY_LAYERS.map(func(p: String) -> Texture2D: return load(p))
-	background.set_level_textures(day_layers, night_layers)
+	background.set_level_textures(GameSession.day_sky_textures(), GameSession.night_sky_textures())
 	DayNightManager.reset()
 	dusk_timer.start(LEVEL_BUDGETS[index])
 
 func _on_dusk_reached() -> void:
-	player.global_position = checkpoint_position
-	player.reset()
-	DayNightManager.reset()
+	GameSession.respawn_player(player, checkpoint_position)
 	dusk_timer.reset_to_checkpoint(checkpoint_saved_time)
 
 func _on_toggled(cost: float) -> void:

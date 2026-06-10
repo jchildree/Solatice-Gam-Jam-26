@@ -6,7 +6,6 @@ var _submitted: bool = false
 func _ready() -> void:
 	$VBoxContainer/BonusButton.pressed.connect(_on_bonus_pressed)
 	$VBoxContainer/SubmitTimeButton.pressed.connect(_on_submit_pressed)
-	Leaderboard.scores_received.connect(_on_scores_received)
 
 	$VBoxContainer/TimeLabel.text = "Time: " + GameSession.format_ms(GameSession.run_elapsed_ms)
 
@@ -31,16 +30,9 @@ func _on_submit_pressed() -> void:
 	$VBoxContainer/SubmitTimeButton.disabled = true
 	$VBoxContainer/LeaderboardLabel.text = "Submitting..."
 	Leaderboard.submit("time", name_val, GameSession.run_elapsed_ms)
-	Leaderboard.fetch("time", 10)
-
-func _on_scores_received(board: String, entries: Array) -> void:
-	if board != "time":
-		return
-	var lines := ["Top Times:"]
-	for i in entries.size():
-		var e: Dictionary = entries[i]
-		lines.append("%d. %-16s %s" % [i + 1, e["name"], GameSession.format_ms(e["score"])])
-	$VBoxContainer/LeaderboardLabel.text = "\n".join(lines)
+	Leaderboard.fetch_top_text("time", 10, func(text: String) -> void:
+		$VBoxContainer/LeaderboardLabel.text = "Top Times:\n" + text
+	)
 
 func _on_bonus_pressed() -> void:
 	if _done:

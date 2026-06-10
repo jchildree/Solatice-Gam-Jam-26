@@ -9,6 +9,8 @@ func _ready() -> void:
 	var dusk_timer = get_tree().get_first_node_in_group("dusk_timer")
 	if dusk_timer:
 		dusk_timer.time_updated.connect(_on_time_updated)
+	else:
+		timer_bar.visible = false
 	_on_state_changed(DayNightManager.is_day)
 
 func _process(_delta: float) -> void:
