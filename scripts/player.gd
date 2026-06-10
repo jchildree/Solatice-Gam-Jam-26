@@ -29,13 +29,48 @@ var _block_toggle: bool = false
 var _bob_time: float = 0.0
 var _squash_timer: float = 0.0
 
-const BASE_SCALE := Vector2(0.4, 0.4)
+const ANIM_SCALE := Vector2(3.5, 3.5)
+const ANIM_Y_OFFSET := -50.0
 const SQUASH_DURATION := 0.18
+const FRAME_SIZE := 48
+const NIGHT_TINT := Color(0.62, 0.66, 0.85)
+
+const ANIM_DEFS := {
+	"idle": {"sheet": "Idle", "frames": 1, "fps": 1.0, "loop": true},
+	"run": {"sheet": "Running", "frames": 12, "fps": 14.0, "loop": true},
+	"jump": {"sheet": "Jumping", "frames": 10, "fps": 12.0, "loop": false},
+	"fall": {"sheet": "Falling", "frames": 11, "fps": 12.0, "loop": true},
+	"land": {"sheet": "Landing", "frames": 6, "fps": 18.0, "loop": false},
+	"roll": {"sheet": "Roll", "frames": 9, "fps": 9.0 / DASH_DURATION, "loop": false},
+}
+
+var _anim: AnimatedSprite2D
 
 func _ready() -> void:
 	_block_toggle = true
-	$Sprite2D.texture = load("res://assets/sprites/character.png")
-	$Sprite2D.scale = BASE_SCALE
+	$Sprite2D.visible = false
+	_anim = AnimatedSprite2D.new()
+	_anim.sprite_frames = _build_frames()
+	_anim.scale = ANIM_SCALE
+	_anim.position.y = ANIM_Y_OFFSET
+	add_child(_anim)
+	_anim.play("idle")
+
+func _build_frames() -> SpriteFrames:
+	var frames := SpriteFrames.new()
+	frames.remove_animation("default")
+	for anim_name in ANIM_DEFS:
+		var def: Dictionary = ANIM_DEFS[anim_name]
+		frames.add_animation(anim_name)
+		frames.set_animation_speed(anim_name, def["fps"])
+		frames.set_animation_loop(anim_name, def["loop"])
+		var tex: Texture2D = load("res://assets/sprites/animations/processed/%s.png" % def["sheet"])
+		for i in range(def["frames"]):
+			var atlas := AtlasTexture.new()
+			atlas.atlas = tex
+			atlas.region = Rect2(i * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
+			frames.add_frame(anim_name, atlas)
+	return frames
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
@@ -64,7 +99,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = dir * SPEED
 		if dir != 0:
 			last_dir = dir
-			$Sprite2D.flip_h = dir < 0
+			_anim.flip_h = dir < 0
 
 		if jump_buffer_timer > 0:
 			if coyote_timer > 0:
@@ -90,6 +125,7 @@ func _physics_process(delta: float) -> void:
 	if not _was_on_floor and is_on_floor():
 		AudioManager.play_sfx("land")
 		_squash_timer = SQUASH_DURATION
+		_anim.play("land")
 	_was_on_floor = is_on_floor()
 
 	_update_sprite(delta)
@@ -106,39 +142,46 @@ func reset() -> void:
 	_squash_timer = 0.0
 	_bob_time = 0.0
 	_block_toggle = true
-	$Sprite2D.scale = BASE_SCALE
-	$Sprite2D.rotation = 0.0
-	$Sprite2D.position.y = 0.0
+	if _anim:
+		_anim.scale = ANIM_SCALE
+		_anim.position.y = ANIM_Y_OFFSET
+		_anim.modulate = Color.WHITE
+		_anim.play("idle")
 
 func _update_sprite(delta: float) -> void:
 	_bob_time += delta
-	var target_scale := BASE_SCALE
-	var target_rot := 0.0
-	var target_y := 0.0
+	var target_scale := ANIM_SCALE
+	var target_y := ANIM_Y_OFFSET
+
+	if is_dashing:
+		if _anim.animation != "roll":
+			_anim.play("roll")
+	elif not is_on_floor():
+		if velocity.y < 0.0:
+			if _anim.animation != "jump":
+				_anim.play("jump")
+		elif _anim.animation != "fall":
+			_anim.play("fall")
+	elif _anim.animation == "land" and _anim.is_playing() and abs(velocity.x) <= 10.0:
+		pass
+	elif abs(velocity.x) > 10.0:
+		if _anim.animation != "run":
+			_anim.play("run")
+	elif _anim.animation != "idle":
+		_anim.play("idle")
+	else:
+		target_y += sin(_bob_time * 2.5) * 1.5
 
 	if _squash_timer > 0.0:
 		_squash_timer -= delta
 		var t := clampf(_squash_timer / SQUASH_DURATION, 0.0, 1.0)
-		target_scale = BASE_SCALE.lerp(Vector2(BASE_SCALE.x * 1.35, BASE_SCALE.y * 0.7), t)
-	elif is_dashing:
-		target_scale = Vector2(BASE_SCALE.x * 1.4, BASE_SCALE.y * 0.75)
-		target_rot = last_dir * 0.12
-	elif not is_on_floor():
-		if velocity.y < -50.0:
-			target_scale = Vector2(BASE_SCALE.x * 0.82, BASE_SCALE.y * 1.18)
-			target_rot = -last_dir * 0.06
-		else:
-			target_scale = Vector2(BASE_SCALE.x * 1.05, BASE_SCALE.y * 0.95)
-			target_rot = last_dir * 0.06
-	elif abs(velocity.x) > 10.0:
-		target_y = sin(_bob_time * 12.0) * 3.0
-		target_rot = velocity.x / SPEED * 0.08
-	else:
-		target_y = sin(_bob_time * 2.5) * 1.5
+		target_scale = ANIM_SCALE.lerp(Vector2(ANIM_SCALE.x * 1.35, ANIM_SCALE.y * 0.7), t)
 
-	$Sprite2D.scale = $Sprite2D.scale.lerp(target_scale, delta * 18.0)
-	$Sprite2D.rotation = lerp($Sprite2D.rotation, target_rot, delta * 14.0)
-	$Sprite2D.position.y = lerp($Sprite2D.position.y, target_y, delta * 20.0)
+	_anim.scale = _anim.scale.lerp(target_scale, delta * 18.0)
+	_anim.position.y = lerp(_anim.position.y, target_y, delta * 20.0)
+
+	var tint := Color.WHITE if DayNightManager.is_day else NIGHT_TINT
+	_anim.modulate = _anim.modulate.lerp(tint, delta * 4.0)
 
 func _handle_dash(delta: float) -> void:
 	if dash_cooldown_timer > 0:
