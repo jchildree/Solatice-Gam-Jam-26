@@ -26,7 +26,6 @@ const APEX_GRAVITY_MULT = 0.69
 const APEX_THRESHOLD = 80.0
 
 var _block_toggle: bool = false
-var _bob_time: float = 0.0
 var _squash_timer: float = 0.0
 
 const ANIM_SCALE := Vector2(3.0, 3.0)
@@ -141,7 +140,6 @@ func reset() -> void:
 	jump_buffer_timer = 0.0
 	_was_on_floor = true
 	_squash_timer = 0.0
-	_bob_time = 0.0
 	_block_toggle = true
 	if _anim:
 		_anim.scale = ANIM_SCALE
@@ -150,7 +148,6 @@ func reset() -> void:
 		_anim.play("idle")
 
 func _update_sprite(delta: float) -> void:
-	_bob_time += delta
 	var target_scale := ANIM_SCALE
 	var target_y := ANIM_Y_OFFSET
 
@@ -170,8 +167,6 @@ func _update_sprite(delta: float) -> void:
 			_anim.play("run")
 	elif _anim.animation != "idle":
 		_anim.play("idle")
-	else:
-		target_y += sin(_bob_time * 2.5) * 1.5
 
 	if _squash_timer > 0.0:
 		_squash_timer -= delta

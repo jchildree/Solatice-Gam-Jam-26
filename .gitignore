@@ -23,7 +23,10 @@ __MACOSX/
 
 # Unused editor addons and their package extras extracted to repo root
 # (vaporwavesky README/LICENSE/icon/preview, limboai demo, scratch scenes)
-addons/
+# silent_wolf is in use and must stay tracked
+addons/*
+!addons/silent_wolf/
+/silent_wolf/
 demo/
 /LICENSE
 /README.md
