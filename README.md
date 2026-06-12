@@ -41,7 +41,8 @@ A game developed for the Solstice Game Jam 26, built using the [Godot Engine](ht
 *(Replace this section with a brief overview of your game's premise, objectives, and controls).*
 
 * **Move:** `W` `A` `S` `D` / Arrow Keys
-* **Action:** `Spacebar` / `Left Mouse Click`
+* **Jump:** `Spacebar`
+* **Day/Night:** `E`
 * **Pause:** `Escape`
 
 ## 📝 License & Credits
