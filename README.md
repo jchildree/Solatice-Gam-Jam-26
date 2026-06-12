@@ -36,6 +36,10 @@ A game developed for the Solstice Game Jam 26, built using the [Godot Engine](ht
 4.  Click **Import & Edit** to open the project in the editor.
 5.  Press `F5` (or click the Play button in the top right) to run the main scene.
 
+   OR
+
+   **Navigate to:** [Solitice](https://jchildree.itch.io/solitice-game-jam-26)
+
 ## 🎮 How to Play
 
 *(Replace this section with a brief overview of your game's premise, objectives, and controls).*
