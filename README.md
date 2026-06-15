@@ -53,4 +53,4 @@ A game developed for the Solstice Game Jam 26, built using the [Godot Engine](ht
 
 * **Developer:** [GreenSide](https://github.com/jchildree)
 * Created for the Solstice Game Jam 26.
-*(Add any specific asset credits, music attributions, or open-source licenses here)*
+* MIT
