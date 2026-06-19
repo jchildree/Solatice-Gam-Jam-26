@@ -25,6 +25,7 @@ const SFX_TONES = {
 var _music: AudioStreamPlayer
 var _sfx: AudioStreamPlayer
 var _sfx_cache: Dictionary = {}
+var _music_cache: Dictionary = {}
 var _current_music: String = ""
 
 func _ready() -> void:
@@ -36,17 +37,17 @@ func _ready() -> void:
 	DayNightManager.state_changed.connect(_on_state_changed)
 	for sfx_name in SFX_TONES:
 		_get_sfx_tone(sfx_name)
+	# Preload all music tracks
+	for music_name in MUSIC_FILES:
+		_preload_music(music_name)
 
 func play_music(key: String) -> void:
 	if key == _current_music:
 		return
-	var path: String = MUSIC_FILES.get(key, "")
-	if path == "" or not ResourceLoader.exists(path):
+	if not _music_cache.has(key):
 		return
 	_current_music = key
-	var stream: AudioStreamMP3 = load(path)
-	stream.loop = true
-	_music.stream = stream
+	_music.stream = _music_cache[key]
 	_music.play()
 
 func play_sfx(name: String) -> void:
@@ -64,6 +65,14 @@ func play_sfx(name: String) -> void:
 
 func _on_state_changed(is_day: bool) -> void:
 	play_music("day" if is_day else "night")
+
+func _preload_music(key: String) -> void:
+	var path: String = MUSIC_FILES.get(key, "")
+	if path == "" or not ResourceLoader.exists(path):
+		return
+	var stream: AudioStreamMP3 = load(path)
+	stream.loop = true
+	_music_cache[key] = stream
 
 func _get_sfx_tone(name: String) -> AudioStreamWAV:
 	if _sfx_cache.has(name):

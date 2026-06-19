@@ -22,6 +22,10 @@ var _running: bool = false
 var _day_sky_textures: Array = []
 var _night_sky_textures: Array = []
 
+func _ready() -> void:
+	day_sky_textures()
+	night_sky_textures()
+
 func respawn_player(player: Node, position: Vector2) -> void:
 	player.global_position = position
 	player.reset()
